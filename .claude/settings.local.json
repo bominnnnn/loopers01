@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn --version)",
+      "Read(//Users/kkbm0225/Library/Java/JavaVirtualMachines/**)",
+      "Bash(/usr/libexec/java_home -V)",
+      "Bash(mvn compile *)",
+      "Bash(mvn test *)",
+      "Bash(sed -i '' 's/\"name\", \"에이전트\",/\"name\", \"에이전트\",\\\\n                                \"birthdate\", \"19900101\",/g' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)",
+      "Bash(sed -i '' 's/\"name\", \"비밀요원\",/\"name\", \"비밀요원\",\\\\n                        \"birthdate\", \"19900101\",/g' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)",
+      "Bash(sed -i '' 's/\"name\", \"새유저\",/\"name\", \"새유저\",\\\\n                                \"birthdate\", \"19900101\",/g' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)"
+    ]
+  }
+}

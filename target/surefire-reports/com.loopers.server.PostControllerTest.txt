@@ -1,0 +1,40 @@
+-------------------------------------------------------------------------------
+Test set: com.loopers.server.PostControllerTest
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 0, Errors: 9, Skipped: 0, Time elapsed: 1.893 s <<< FAILURE! - in com.loopers.server.PostControllerTest
+likePost_success  Time elapsed: 0.338 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+getPosts_success  Time elapsed: 0.008 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+getPosts_filterBySubject  Time elapsed: 0.006 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+getRanking_success  Time elapsed: 0.01 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+createPost_missingFields  Time elapsed: 0.017 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+getPost_success  Time elapsed: 0.009 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+createPost_noToken  Time elapsed: 0.006 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+getPost_notFound  Time elapsed: 0.011 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
+createPost_success  Time elapsed: 0.006 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.fasterxml.jackson.databind.JsonNode.asText()" because the return value of "com.fasterxml.jackson.databind.JsonNode.get(String)" is null
+	at com.loopers.server.PostControllerTest.setUp(PostControllerTest.java:54)
+
