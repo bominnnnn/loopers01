@@ -38,6 +38,7 @@ class PostControllerTest {
                 .content(objectMapper.writeValueAsString(Map.of(
                         "loginId", "poster",
                         "name", "작성자",
+                        "birthdate", "19900101",
                         "email", "poster@test.com",
                         "password", "Post1234!"
                 ))));

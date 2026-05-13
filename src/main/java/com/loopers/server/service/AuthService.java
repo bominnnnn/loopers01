@@ -7,8 +7,12 @@ import com.loopers.server.model.UserHistory;
 import com.loopers.server.repository.InMemoryUserHistoryRepository;
 import com.loopers.server.repository.InMemoryUserRepository;
 import com.loopers.server.security.JwtUtil;
-import com.loopers.server.util.PiUtil;
-import com.loopers.server.util.ValidationUtil;
+import com.loopers.server.util.PasswordRotateUtil;
+import com.loopers.server.vo.Birthdate;
+import com.loopers.server.vo.Email;
+import com.loopers.server.vo.LoginId;
+import com.loopers.server.vo.Password;
+import com.loopers.server.vo.UserName;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,41 +44,33 @@ public class AuthService {
     }
 
     public Map<String, Object> register(RegisterRequest req) {
-        // 1) 필수 항목 존재 여부
-        if (req.getLoginId() == null || req.getLoginId().isBlank()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "로그인 아이디를 입력해주세요.");
-        }
+        // VO 생성 시 각 필드 검증 자동 수행 — 유효하지 않으면 ApiException 발생
+        LoginId  loginId   = new LoginId(req.getLoginId());
+        UserName name      = new UserName(req.getName());
+        Email    email     = new Email(req.getEmail());
+        Birthdate birthdate = new Birthdate(req.getBirthdate());
+        Password password  = new Password(req.getPassword(), birthdate);
 
-        // 2) 각 필드 포맷 검증
-        List<String> errors = new ArrayList<>();
-        errors.addAll(ValidationUtil.validateName(req.getName()));
-        errors.addAll(ValidationUtil.validateEmail(req.getEmail()));
-        String birthdate = ValidationUtil.normalizeBirthdate(req.getBirthdate(), errors);
-        errors.addAll(ValidationUtil.validatePassword(req.getPassword(), birthdate));
-        if (!errors.isEmpty()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, String.join(" ", errors));
-        }
-
-        // 3) 중복 확인
-        if (userRepository.findByLoginId(req.getLoginId()) != null) {
+        // 중복 확인
+        if (userRepository.findByLoginId(loginId.getValue()) != null) {
             throw new ApiException(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다.");
         }
-        if (userRepository.findByEmail(req.getEmail()) != null) {
+        if (userRepository.findByEmail(email.getValue()) != null) {
             throw new ApiException(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다.");
         }
 
         User user = new User();
-        user.setLoginId(req.getLoginId());
-        user.setName(req.getName());
-        user.setBirthdate(birthdate);
-        user.setEmail(req.getEmail());
-        user.setPasswordHash(passwordEncoder.encode(req.getPassword()));
+        user.setLoginId(loginId.getValue());
+        user.setName(name.getValue());
+        user.setBirthdate(birthdate.getValue());
+        user.setEmail(email.getValue());
+        user.setPasswordHash(passwordEncoder.encode(password.getValue()));
         user.setDuressPasswordHash(
                 req.getDuressPassword() != null && !req.getDuressPassword().isBlank()
                         ? passwordEncoder.encode(req.getDuressPassword())
                         : null
         );
-        user.setRole(AGENT_CODE.equals(req.getReferral()) ? "agent" : "civilian");
+        user.setRole(determineRole(req.getReferral()));
 
         User saved = userRepository.save(user);
 
@@ -130,12 +126,11 @@ public class AuthService {
         }
 
         // 4) 요원이면 로그인 성공 직후 비밀번호 자동 변경
-        //    규칙: 새 비밀번호 = 기존 비밀번호 + π의 n번째 소수점 자리
-        //    예)  loginId="agent42" → n=42 → π[42]='9' → 새 비밀번호 = 기존비번 + "9"
+        //    규칙: loginId의 첫 번째 숫자를 n으로, 비밀번호 내 각 숫자 d → (d×n) % 10
+        //    예)  loginId="agent42" → n=4, 비번="Pass123!" → "Pass484!"
         if ("agent".equals(user.getRole())) {
-            int n = PiUtil.extractNumber(user.getLoginId());
-            char piDigit = PiUtil.getDecimalDigit(n);
-            String newPlainPassword = req.getPassword() + piDigit;
+            int n = PasswordRotateUtil.extractFirstDigit(user.getLoginId());
+            String newPlainPassword = PasswordRotateUtil.rotateDigits(req.getPassword(), n);
             String newHash = passwordEncoder.encode(newPlainPassword);
 
             userRepository.addPasswordHistory(user.getId(), user.getPasswordHash());
@@ -200,8 +195,8 @@ public class AuthService {
         if (password == null || password.isBlank()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "password 필드가 필요합니다.");
         }
-        // 생년월일 없이 기본 형식만 검사
-        List<String> errors = ValidationUtil.validatePassword(password, null);
+        // 생년월일 없이 형식만 검사 (Password VO의 static validate 사용)
+        List<String> errors = Password.validate(password, null);
 
         Map<String, Object> result = new LinkedHashMap<>();
         if (!errors.isEmpty()) {
@@ -219,6 +214,11 @@ public class AuthService {
         }
         // TODO: 해당 유저의 게시글 등 연관 데이터 삭제
     }
+
+    private String determineRole(String referral) {
+        return AGENT_CODE.equals(referral) ? "agent" : "civilian";
+    }
+
 
     public List<UserHistoryResponse> getMyHistory(int userId) {
         return historyRepository.findByUserId(userId).stream()
