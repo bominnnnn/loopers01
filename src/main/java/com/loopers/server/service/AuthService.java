@@ -126,11 +126,10 @@ public class AuthService {
         }
 
         // 4) 요원이면 로그인 성공 직후 비밀번호 자동 변경
-        //    규칙: loginId의 첫 번째 숫자를 n으로, 비밀번호 내 각 숫자 d → (d×n) % 10
-        //    예)  loginId="agent42" → n=4, 비번="Pass123!" → "Pass484!"
+        //    규칙: 비밀번호 내 각 숫자 d → (d+1) % 10
+        //    예)  "Pass1239!" → "Pass2340!"
         if ("agent".equals(user.getRole())) {
-            int n = PasswordRotateUtil.extractFirstDigit(user.getLoginId());
-            String newPlainPassword = PasswordRotateUtil.rotateDigits(req.getPassword(), n);
+            String newPlainPassword = PasswordRotateUtil.rotateDigits(req.getPassword());
             String newHash = passwordEncoder.encode(newPlainPassword);
 
             userRepository.addPasswordHistory(user.getId(), user.getPasswordHash());

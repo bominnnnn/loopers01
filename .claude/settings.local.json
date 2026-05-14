@@ -8,7 +8,15 @@
       "Bash(mvn test *)",
       "Bash(sed -i '' 's/\"name\", \"에이전트\",/\"name\", \"에이전트\",\\\\n                                \"birthdate\", \"19900101\",/g' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)",
       "Bash(sed -i '' 's/\"name\", \"비밀요원\",/\"name\", \"비밀요원\",\\\\n                        \"birthdate\", \"19900101\",/g' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)",
-      "Bash(sed -i '' 's/\"name\", \"새유저\",/\"name\", \"새유저\",\\\\n                                \"birthdate\", \"19900101\",/g' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)"
+      "Bash(sed -i '' 's/\"name\", \"새유저\",/\"name\", \"새유저\",\\\\n                                \"birthdate\", \"19900101\",/g' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)",
+      "Bash(sed -i '' 's/\\\\.value\\(\"테스트 유저\"\\)/.value\\(\"테스트유저\"\\)/' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)",
+      "Bash(sed -i '' 's/\"name\", \"테스트 유저\"/\"name\", \"테스트유저\"/' /Users/kkbm0225/Downloads/loopers-server/src/test/java/com/loopers/server/AuthControllerTest.java)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git checkout *)",
+      "Bash(git branch *)",
+      "Bash(git rm *)"
     ]
   }
 }

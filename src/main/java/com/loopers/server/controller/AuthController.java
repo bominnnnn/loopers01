@@ -2,6 +2,7 @@ package com.loopers.server.controller;
 
 import com.loopers.server.dto.*;
 import com.loopers.server.dto.UserHistoryResponse;
+import com.loopers.server.security.TokenBlacklist;
 import com.loopers.server.security.UserPrincipal;
 import com.loopers.server.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -17,9 +18,11 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final TokenBlacklist tokenBlacklist;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, TokenBlacklist tokenBlacklist) {
         this.authService = authService;
+        this.tokenBlacklist = tokenBlacklist;
     }
 
     /** POST /api/auth/register — 회원가입 */
@@ -65,6 +68,15 @@ public class AuthController {
         return ResponseEntity.status(valid ? HttpStatus.OK : HttpStatus.UNPROCESSABLE_ENTITY).body(result);
     }
 
+    /** POST /api/auth/logout — 로그아웃 */
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(
+            @org.springframework.web.bind.annotation.RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        tokenBlacklist.add(token);
+        return ResponseEntity.ok(Map.of("message", "로그아웃 되었습니다."));
+    }
+
     /** DELETE /api/auth/me — 회원 탈퇴 */
     @DeleteMapping("/me")
     public ResponseEntity<Map<String, String>> deleteAccount(@AuthenticationPrincipal UserPrincipal principal) {
@@ -77,12 +89,5 @@ public class AuthController {
     public ResponseEntity<Map<String, Object>> getMyHistory(@AuthenticationPrincipal UserPrincipal principal) {
         List<UserHistoryResponse> history = authService.getMyHistory(principal.getId());
         return ResponseEntity.ok(Map.of("history", history));
-    }
-
-    /** GET /api/auth/me/posts — 내가 작성한 게시글 목록 */
-    @GetMapping("/me/posts")
-    public ResponseEntity<Map<String, Object>> getMyPosts() {
-        // TODO: PostService 에서 userId 로 필터링
-        return ResponseEntity.ok(Map.of("posts", List.of()));
     }
 }
